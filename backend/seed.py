@@ -292,10 +292,26 @@ INTERVENTIONS = {
     "attendance": ["Motivational interviewing", "Problem solving", "Family engagement"],
 }
 REFERRAL_REASONS = {
-    "depression": "Student has seemed withdrawn for several weeks, is not completing work, and put their head down in class most days.",
-    "anxiety": "Student becomes visibly distressed before tests and has asked to go to the nurse several times during assessments.",
-    "behavior": "Repeated classroom disruptions and two conflicts with peers this month. Redirection is not working consistently.",
-    "attendance": "Chronic absences this semester and several late arrivals. Student says they feel behind and overwhelmed.",
+    "depression": [
+        "Student has seemed withdrawn for several weeks, is not completing work, and puts their head down in class most days.",
+        "Grades have dropped in three classes since last quarter. Student told me they do not see the point in trying.",
+        "Student stopped sitting with friends at lunch and has been tearful twice this week.",
+    ],
+    "anxiety": [
+        "Student becomes visibly distressed before tests and has asked to go to the nurse several times during assessments.",
+        "Student avoids presenting in class and has left the room twice during group work, saying they could not breathe.",
+        "Parent reports stomachaches most school mornings and difficulty sleeping before school days.",
+    ],
+    "behavior": [
+        "Repeated classroom disruptions and two conflicts with peers this month. Redirection is not working consistently.",
+        "Student has left class without permission several times and becomes argumentative when redirected.",
+        "Frequent outbursts during transitions. Two office referrals this month for pushing peers in line.",
+    ],
+    "attendance": [
+        "Chronic absences this semester and several late arrivals. Student says they feel behind and overwhelmed.",
+        "Student has missed most first-period classes this month. Guardian says mornings have become a struggle.",
+        "Nine absences since the start of the term, most on Mondays. Student is falling behind in core classes.",
+    ],
 }
 CONCERN_TAGS = {
     "depression": ["Low mood", "Withdrawal", "Declining grades"],
@@ -440,7 +456,7 @@ def make_student(db, district, school, level, kind, first, last, sid, counselor,
         student_id=student.id,
         source=rng.choice(["teacher", "teacher", "parent", "screening", "staff"]),
         referred_by=rng.choice(TEACHERS),
-        reason=REFERRAL_REASONS[profile.concern],
+        reason=rng.choice(REFERRAL_REASONS[profile.concern]),
         concerns=rng.sample(CONCERN_TAGS[profile.concern], 2),
         urgency=rng.choices(["routine", "priority", "urgent"], [6, 3, 1])[0],
         status="accepted",
@@ -587,7 +603,7 @@ def make_pending_referral(db, student, profile, counselor, admin):
             student_id=student.id,
             source=rng.choice(["teacher", "parent", "screening", "self"]),
             referred_by=rng.choice(TEACHERS) if rng.random() < 0.7 else student.guardian_name,
-            reason=REFERRAL_REASONS[profile.concern],
+            reason=rng.choice(REFERRAL_REASONS[profile.concern]),
             concerns=rng.sample(CONCERN_TAGS[profile.concern], 2),
             urgency=urgency,
             status=status,
@@ -649,6 +665,19 @@ def assessment_dates(start: date, end: date) -> list[tuple[date, bool]]:
     return out
 
 
+SLOTS = [(8, 30), (9, 45), (11, 0), (13, 0), (14, 15)]
+USED_SLOTS: dict[int, set[tuple[int, tuple[int, int]]]] = {}
+
+
+def claim_slot(counselor_id: int) -> tuple[int, tuple[int, int]]:
+    """A weekly time that no other student of this counselor already has."""
+    used = USED_SLOTS.setdefault(counselor_id, set())
+    free = [(d, s) for d in range(5) for s in SLOTS if (d, s) not in used]
+    choice = rng.choice(free)
+    used.add(choice)
+    return choice
+
+
 def make_clinical_record(db, student, profile, case, counselor, case_start, case_end, has_telehealth):
     uses_screeners = profile.level != "elementary"
     end = case_end or TODAY
@@ -698,12 +727,12 @@ def make_clinical_record(db, student, profile, case, counselor, case_start, case
     for i, start in enumerate(plan_starts):
         active = i == len(plan_starts) - 1 and case_end is None
         review = start + timedelta(days=90)
-        if active and rng.random() < 0.15:
+        if active and rng.random() < 0.08:
             review = TODAY - timedelta(days=rng.randint(2, 10))  # overdue review
         tp = TreatmentPlan(
             student_id=student.id,
             case_id=case.id,
-            presenting_concerns=REFERRAL_REASONS[profile.concern],
+            presenting_concerns=REFERRAL_REASONS[profile.concern][0],
             approach=APPROACH[profile.concern],
             service_frequency="Weekly, 30 minutes" if profile.level == "elementary" else "Weekly, 45 minutes",
             start_date=start,
@@ -718,8 +747,7 @@ def make_clinical_record(db, student, profile, case, counselor, case_start, case
 
     # Weekly sessions from intake until the case closes, plus two weeks ahead for open cases.
     horizon = case_end or (TODAY + timedelta(days=14))
-    weekday = rng.randint(0, 4)
-    slot = rng.choice([(8, 30), (9, 45), (10, 30), (11, 15), (13, 0), (13, 45), (14, 30)])
+    weekday, slot = claim_slot(counselor.id)
     minutes = 30 if profile.level == "elementary" else rng.choice([30, 45, 45])
     d = case_start
     first_session = True
@@ -768,13 +796,20 @@ def make_clinical_record(db, student, profile, case, counselor, case_start, case
 
 def add_goals(db, student, profile, plan, start, assessments, uses_screeners):
     def baseline_assessment(code):
-        candidates = [a for a in assessments if a.instrument == code and a.administered_on >= start]
-        return candidates[0] if candidates else None
+        """The screening closest to the plan start: the latest within a week before it, else the next one."""
+        mine = [a for a in assessments if a.instrument == code]
+        before = [a for a in mine if start - timedelta(days=7) <= a.administered_on <= start]
+        after = [a for a in mine if a.administered_on > start]
+        return before[-1] if before else (after[0] if after else None)
 
     def month_attendance(d):
         """Attendance rate over the 20 school days before d."""
         record = ATTENDANCE[student.id]
-        days = [x for x in ALL_DAYS if x < d][-20:]
+        year_start = CUR_FIRST if d >= CUR_FIRST else PRIOR_FIRST
+        days = [x for x in ALL_DAYS if year_start <= x < d][-20:]
+        if len(days) < 10:
+            # Too early in the year for a look-back; use the first weeks of the year instead.
+            days = [x for x in ALL_DAYS if x >= year_start][:20]
         statuses = [record[x] for x in days if x in record]
         if not statuses:
             return 90.0
@@ -864,10 +899,10 @@ def write_note(db, session, profile, counselor, goal_ids):
             return
         signed = False
     else:
-        signed = rng.random() > 0.02
+        signed = True
     risk = "none"
     if profile.course == "worsening" and age_hours < 24 * 21:
-        risk = rng.choice(["low", "elevated"])
+        risk = "elevated" if rng.random() < 0.2 else "low"
     db.add(
         SessionNote(
             session_id=session.id,

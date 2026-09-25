@@ -267,17 +267,19 @@ def evaluate_goal(db: Session, goal: Goal, today: date) -> dict:
     series = metric_series(db, goal.student_id, goal.metric, goal.baseline_date)
     direction = METRICS[goal.metric]["direction"]
 
+    # Trend compares the latest measure with the one before it. With a single
+    # measure since the plan started, the comparison point is the baseline.
     trend = "no_data"
-    if len(series) >= 2:
-        delta = series[-1]["value"] - series[-2]["value"]
+    if value is not None:
+        previous = series[-2]["value"] if len(series) >= 2 else goal.baseline_value
+        latest = series[-1]["value"] if series else value
+        delta = latest - previous
         if abs(delta) < 1e-9:
             trend = "steady"
         elif (delta < 0) == (direction == "down"):
             trend = "improving"
         else:
             trend = "worsening"
-    elif value is not None:
-        trend = "steady"
 
     fraction = (
         None if value is None else progress_fraction(goal.baseline_value, value, goal.target_value, goal.comparator)

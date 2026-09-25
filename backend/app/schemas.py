@@ -68,7 +68,7 @@ class StudentSummary(BaseModel):
     latest_phq9: dict | None
     latest_gad7: dict | None
     next_session: datetime | None
-    alerts: list[str]
+    alerts: list[dict]
 
 
 class StudentDetail(ORM):

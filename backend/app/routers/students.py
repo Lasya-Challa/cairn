@@ -111,7 +111,7 @@ def list_students(
                 latest_phq9=_assessment_brief(latest_assessment(db, s.id, "PHQ9")),
                 latest_gad7=_assessment_brief(latest_assessment(db, s.id, "GAD7")),
                 next_session=next_session,
-                alerts=[a["text"] for a in student_alerts(db, s, today, now)],
+                alerts=student_alerts(db, s, today, now),
             )
         )
     return out

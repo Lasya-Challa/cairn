@@ -74,3 +74,26 @@ def test_school_year():
     assert school_year_of(date(2026, 9, 25)) == "2026-27"
     assert school_year_of(date(2027, 3, 1)) == "2026-27"
     assert school_year_of(date(2026, 7, 31)) == "2025-26"
+
+
+def test_single_measure_trend_compares_with_baseline():
+    from types import SimpleNamespace
+    from unittest.mock import patch
+
+    from app import clinical
+
+    goal = SimpleNamespace(
+        student_id=1,
+        metric="sel_rating",
+        comparator="gte",
+        target_value=3,
+        baseline_value=3,
+        baseline_date=date(2026, 8, 17),
+    )
+    with (
+        patch.object(clinical, "current_value", return_value=(2.0, date(2026, 9, 3))),
+        patch.object(clinical, "metric_series", return_value=[{"date": date(2026, 9, 3), "value": 2.0}]),
+    ):
+        result = clinical.evaluate_goal(None, goal, date(2026, 9, 25))
+    assert result["trend"] == "worsening"
+    assert result["met"] is False
