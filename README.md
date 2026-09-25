@@ -4,6 +4,8 @@ Case management for school-based mental health teams: referrals, guardian consen
 
 Cairn is a portfolio project modeled on the care workflow of district mental health platforms such as MIYO Care. It is not affiliated with MIYO Health, and every person and record in the demo data is synthetic.
 
+![Student 360 view](docs/student-360.png)
+
 ## What it does
 
 | Role | Can do |
@@ -21,6 +23,10 @@ The care workflow follows one student from referral to billing:
 5. **Sessions and notes.** Scheduling, attendance, and DAP notes. Signed notes are locked; later changes go into dated addenda.
 6. **Progress.** The Student 360 view shows start-of-year baselines, progress on each goal, and 12-month trends for screenings, attendance, behavior, teacher check-ins and nurse visits.
 7. **Billing.** Each completed session becomes a billing line with a service code. It is exportable only when its documentation is complete.
+
+| Counselor's day | PHQ-9 entry with item 9 safety prompt |
+| --- | --- |
+| ![Today](docs/today.png) | ![Assessment](docs/assessment.png) |
 
 ## Design decisions worth discussing
 
