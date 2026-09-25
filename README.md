@@ -61,6 +61,8 @@ frontend/
     ui.tsx           shared components
 ```
 
+For a step-by-step walkthrough of how the app works and a full manual test script, see [docs/GUIDE.md](docs/GUIDE.md).
+
 ## Run it
 
 ### Locally (SQLite, no database setup)
