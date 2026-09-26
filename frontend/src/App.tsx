@@ -18,7 +18,7 @@ import SessionDrawer from './pages/SessionDrawer'
 const ROLE_LABEL: Record<Role, string> = {
   counselor: 'Counselor',
   admin: 'Administrator',
-  billing: 'Billing',
+  billing: 'Billing specialist',
 }
 
 export default function App() {

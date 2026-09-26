@@ -34,7 +34,7 @@ export default function StudentRecord() {
       <section className="panel">
         <Empty title={status === 403 ? 'This student is not on your caseload' : 'Student not found'}>
           {status === 403
-            ? 'Ask your director to reassign the student if you need access.'
+            ? 'Ask your administrator to reassign the student if you need access.'
             : 'Check the link or search from your caseload.'}
         </Empty>
       </section>

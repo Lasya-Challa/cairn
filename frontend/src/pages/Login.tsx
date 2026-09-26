@@ -6,8 +6,8 @@ import { ErrorNote, initials } from '../ui'
 const DEMO = [
   { email: 'maya.okafor@riverbend.example', name: 'Maya Okafor', role: 'Counselor, middle school' },
   { email: 'daniel.reyes@riverbend.example', name: 'Daniel Reyes', role: 'Counselor, high school' },
-  { email: 'grace.whitfield@riverbend.example', name: 'Grace Whitfield', role: 'Director of Student Services' },
-  { email: 'tom.alvarez@riverbend.example', name: 'Tom Alvarez', role: 'Medicaid billing' },
+  { email: 'grace.whitfield@riverbend.example', name: 'Grace Whitfield', role: 'Administrator, Student Services' },
+  { email: 'tom.alvarez@riverbend.example', name: 'Tom Alvarez', role: 'Billing specialist' },
 ]
 
 export default function Login() {

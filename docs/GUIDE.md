@@ -52,7 +52,7 @@ Every screen works this way.
 | Role | Demo account | Can do |
 | --- | --- | --- |
 | Counselor | Maya Okafor (middle school), Daniel Reyes (high school) | Their own caseload only: screenings, plans, sessions, notes, consents |
-| Director | Grace Whitfield | Everything in the district, assigns referrals, sees the access log |
+| Administrator | Grace Whitfield | Everything in the district, assigns referrals, sees the access log |
 | Billing | Tom Alvarez | Billing lines and exports only, never clinical notes or scores |
 
 Password for all demo accounts: `demo1234`.
@@ -60,7 +60,7 @@ Password for all demo accounts: `demo1234`.
 ### The care workflow the app follows
 
 ```
-Referral → Director accepts → Case opens → Guardian consent → Screening (PHQ-9/GAD-7)
+Referral → Administrator accepts → Case opens → Guardian consent → Screening (PHQ-9/GAD-7)
    → Treatment plan with goals → Weekly sessions → Signed notes → Progress on goals
    → Medicaid billing export
 ```
@@ -249,7 +249,7 @@ Do these in order. Each step says what to do and what you should see. Tick each 
 
 Sign out.
 
-### B. Director: Grace Whitfield
+### B. Administrator: Grace Whitfield
 
 **B1. District overview**
 - [ ] Four figures: referrals waiting, students on a caseload, sessions this month, attendance at sessions.
@@ -342,7 +342,7 @@ In Chrome, press F12, click the phone icon, and choose a width of about 390 px. 
 | `app/routers/clinical.py` | Screenings, plans, goals, consents |
 | `app/routers/sessions.py` | Sessions, notes, signing, addenda, home dashboard |
 | `app/routers/referrals.py` | Referrals and decisions |
-| `app/routers/admin.py` | Schools, counselors, billing, director summary, access log |
+| `app/routers/admin.py` | Schools, counselors, billing, administrator summary, access log |
 | `seed.py` | Generates the fictional district |
 | `tests/` | Automated tests |
 
@@ -358,7 +358,7 @@ In Chrome, press F12, click the phone icon, and choose a width of about 390 px. 
 | `charts.tsx` | The goal trail and the charts |
 | `index.css` | All styling: colors, fonts, layout |
 | `pages/Login.tsx` | Sign-in page |
-| `pages/Home.tsx` | Counselor home and director overview |
+| `pages/Home.tsx` | Counselor home and administrator overview |
 | `pages/Students.tsx` | Caseload list |
 | `pages/StudentRecord.tsx` | Student header and tabs |
 | `pages/student/*.tsx` | Overview, Assessments, Plan, Sessions, Timeline, Consents, Profile tabs |

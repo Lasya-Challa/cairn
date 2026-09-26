@@ -11,12 +11,12 @@ Cairn is a portfolio project modeled on the care workflow of district mental hea
 | Role | Can do |
 | --- | --- |
 | Counselor | See their caseload and today's sessions, record assessments, build treatment plans, schedule sessions, write and sign DAP notes, record consent |
-| Director (admin) | Triage referrals and assign counselors, see every student in the district, review caseloads and safety follow-ups, read the access log |
+| Administrator | Triage referrals and assign counselors, see every student in the district, review caseloads and safety follow-ups, read the access log |
 | Billing specialist | Review billing lines, see what blocks each one, export ready lines as CSV. No access to clinical notes or assessments |
 
 The care workflow follows one student from referral to billing:
 
-1. **Referral.** Any staff member refers a student. The director accepts (assigning a counselor opens a case) or declines with a reason.
+1. **Referral.** Any staff member refers a student. The administrator accepts (assigning a counselor opens a case) or declines with a reason.
 2. **Consent.** Services, telehealth, Medicaid billing and release of information consents, with expiration and revocation.
 3. **Assessment.** PHQ-9 and GAD-7 with automatic scoring against the published severity bands. A positive answer on PHQ-9 item 9 raises a safety alert.
 4. **Treatment plan.** Approach, frequency, review date, and goals with a measure, target and baseline.
@@ -97,7 +97,7 @@ Password for all accounts: `demo1234`. The sign-in page also lists them as one-c
 | --- | --- |
 | maya.okafor@riverbend.example | Counselor, middle school |
 | daniel.reyes@riverbend.example | Counselor, high school |
-| grace.whitfield@riverbend.example | Director of Student Services |
+| grace.whitfield@riverbend.example | Student Services |
 | tom.alvarez@riverbend.example | Medicaid billing |
 
 Seed data is generated relative to today's date, so the demo always shows a current school year. Run `python -m seed` again to reset it.

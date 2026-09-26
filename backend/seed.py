@@ -353,8 +353,8 @@ def main() -> None:
         staff("daniel.reyes@riverbend.example", "Daniel Reyes", "counselor", "LPC"),
         staff("hannah.brooks@riverbend.example", "Hannah Brooks", "counselor", "LSSP"),
     ]
-    admin = staff("grace.whitfield@riverbend.example", "Grace Whitfield", "admin", "Director of Student Services")
-    staff("tom.alvarez@riverbend.example", "Tom Alvarez", "billing", "Medicaid Billing Specialist")
+    admin = staff("grace.whitfield@riverbend.example", "Grace Whitfield", "admin", "Student Services")
+    staff("tom.alvarez@riverbend.example", "Tom Alvarez", "billing")
     db.flush()
 
     # Which counselor covers which level. Maya: middle, Daniel: high, Hannah: elementary + overflow.
