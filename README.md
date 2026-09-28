@@ -2,7 +2,7 @@
 
 Case management for school-based mental health teams: referrals, guardian consent, PHQ-9 and GAD-7 screenings, treatment plans with measurable goals, sessions with signed notes, a Student 360 view, and Medicaid billing readiness.
 
-Cairn is a portfolio project modeled on the care workflow of district mental health platforms such as MIYO Care. It is not affiliated with MIYO Health, and every person and record in the demo data is synthetic.
+
 
 ![Student 360 view](docs/student-360.png)
 
@@ -61,7 +61,7 @@ frontend/
     ui.tsx           shared components
 ```
 
-For a step-by-step walkthrough of how the app works and a full manual test script, see [docs/GUIDE.md](docs/GUIDE.md).
+
 
 ## Run it
 
@@ -87,7 +87,6 @@ npm run dev                     # http://localhost:5173
 docker compose up --build
 ```
 
-Open http://localhost:5173. The API seeds itself on first start.
 
 ### Demo accounts
 
@@ -102,6 +101,7 @@ Password for all accounts: `demo1234`. The sign-in page also lists them as one-c
 
 Seed data is generated relative to today's date, so the demo always shows a current school year. Run `python -m seed` again to reset it.
 
+
 ## Tests
 
 ```bash
@@ -109,11 +109,3 @@ cd backend
 pytest
 ```
 
-Covers scoring bands and the item 9 flag, the progress formula, role and caseload access, the note lifecycle (complete, sign, lock, addendum), referral decisions, billing export rules and the audit log.
-
-## Not built yet
-
-- Database migrations (Alembic). Tables are created on startup.
-- Student information system integration. School data comes from the seed script.
-- Built-in video for telehealth, legally binding e-signatures, multi-factor authentication.
-- State-specific Medicaid rules. The service code table in `billing.py` is a configurable default.
